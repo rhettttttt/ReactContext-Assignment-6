@@ -1,16 +1,25 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// src/views/LoginView.jsx
+import React, { useState, useContext } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { UserContext } from "../context/UserContext";
 
 export default function LoginView() {
     const [form, setForm] = useState({ email: "", password: "" });
     const navigate = useNavigate();
+    const location = useLocation();
+    const { setUser } = useContext(UserContext);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // TODO: real auth here
-        navigate("/movies");
+        setUser({
+            firstName: "Bill",
+            email: form.email,
+        });
+
+        const from = location.state?.from?.pathname || "/movies";
+        navigate(from, { replace: true });
     };
 
     return (
