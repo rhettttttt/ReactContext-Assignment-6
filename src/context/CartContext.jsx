@@ -1,27 +1,31 @@
 // src/context/CartContext.jsx
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from "react";
 
 export const CartContext = createContext();
 
 export function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState([]);
-
-  const addToCart = (movie) => {
-    setCartItems((prevItems) => {
-      if (!prevItems.find((item) => item.id === movie.id)) {
-        return [...prevItems, movie];
-      }
-      return prevItems;
+    const [cartItems, setCartItems] = useState(() => {
+        const stored = localStorage.getItem("cartItems");
+        return stored ? JSON.parse(stored) : [];
     });
-  };
 
-  const removeFromCart = (movieId) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== movieId));
-  };
+    useEffect(() => {
+        localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    }, [cartItems]);
 
-  return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart }}>
-      {children}
-    </CartContext.Provider>
-  );
+    const addToCart = (item) => {
+        setCartItems((prev) => [...prev, item]);
+    };
+
+    const removeFromCart = (itemId) => {
+        setCartItems((prev) => prev.filter((item) => item.id !== itemId));
+    };
+
+    return (
+        <CartContext.Provider
+            value={{ cartItems, setCartItems, addToCart, removeFromCart }}
+        >
+            {children}
+        </CartContext.Provider>
+    );
 }

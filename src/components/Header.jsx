@@ -1,6 +1,8 @@
 import React, { useContext, useState, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
 
 function debounce(func, delay) {
     let timeoutId;
@@ -28,8 +30,9 @@ export default function Header() {
     const active = "underline text-red-400";
     const base = "hover:text-red-300 transition";
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         setUser(null);
+        await signOut(auth);
         navigate("/");
     };
 
